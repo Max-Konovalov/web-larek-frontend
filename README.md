@@ -43,12 +43,20 @@ yarn build
 
 
 ## Проектирование 
-
-Эта схема представляет собой архитектуру клиентской части веб-приложения, описанную на языке UML (Unified Modeling Language). Давайте рассмотрим основные компоненты и их взаимодействие.
+Давайте рассмотрим основные компоненты и их взаимодействие.
 
 ### Основные классы (Базовые классы)
 
 1. **Component<T>**
+```typescript
+class Component<T extends HTMLElement> {
+    container: T;
+
+    constructor(container: T) {
+        this.container = container;
+    }
+}
+```
    - Представляет базовый компонент с различными элементами HTML и методами для управления ими.
    - Методы:
      - `toggleClass()`: Переключение класса элемента.
@@ -60,12 +68,35 @@ yarn build
      - `render()`: Отображение данных.
 
 2. **View<T>**
+```typescript
+class View<T extends HTMLElement> extends Component<T> {
+    events: IEvents;
+
+    constructor(container: T, events: IEvents) {
+        super(container);
+        this.events = events;
+    }
+}
+```
    - Базовый класс для всех представлений, наследует Component.
    - Содержит контейнер и события.
     
 ### Классы
 
 1. **WebLarekAPI**
+
+```typescript
+class WebLarekAPI implements IWebLarekAPI {
+    cdn: string;
+    baseUrl: string;
+
+    constructor(cdn: string, baseUrl: string, options?: RequestInit) {
+        this.cdn = cdn;
+        this.baseUrl = baseUrl;
+    }
+}
+```
+
    - Класс для взаимодействия с WebLarek API, реализует интерфейс IWebLarekAPI.
    - Свойства:
      - `cdn`: URL контентной сети доставки.
@@ -77,6 +108,20 @@ yarn build
      - `offAll()`: Отписка от всех событий.
        
 3. **AppData**
+```typescript
+class AppData {
+    items: IProduct[] = [];
+    preview: IProduct | null = null;
+    basket: IBasket = { items: [], total: 0 };
+    order: IOrder | null = null;
+    formErrors: Partial<Record<string, string>> = {};
+    events: IEvents;
+
+    constructor(events: IEvents) {
+        this.events = events;
+    }
+}
+```
    - Класс для управления данными приложения.
    - Свойства:
      - `items`: Список продуктов.
@@ -98,6 +143,14 @@ yarn build
      - `clearOrder()`: Очистка заказа.
 
 4. **Page**
+```typescript
+class Page extends View<HTMLDivElement> {
+    counter: HTMLElement;
+    catalog: HTMLElement;
+    wrapper: HTMLElement;
+    basket: HTMLElement;
+}
+```
    - Представление страницы.
    - Свойства:
      - `counter`: Счетчик.
@@ -110,6 +163,14 @@ yarn build
      - `locked()`: Управление блокировкой.
 
 5. **Basket**
+```typescript
+class Basket extends View<HTMLDivElement> {
+    items: string{};
+    list: string[];
+    total: number;
+    button: HTMLElement;
+}
+```
    - Представление корзины.
    - Свойства:
      - `items`: Элементы корзины.
@@ -122,6 +183,16 @@ yarn build
      - `total()`: Расчет общей стоимости.
 
 6. **Card**
+```typescript
+class Card extends View<HTMLDivElement> {
+    title: string;
+    image: string;
+    price: number;
+    description: string;
+    category: string;
+    button: HTMLButtonElement;
+}
+```
    - Представление карточки продукта.
    - Свойства:
      - `title`: Заголовок.
@@ -139,6 +210,18 @@ yarn build
      - `button()`: Управление кнопкой.
 
 7. **Form**
+```typescript
+class Form extends View<HTMLFormElement> {
+    submit: HTMLButtonElement;
+    errors: HTMLElement;
+
+    constructor(container: HTMLFormElement, events: IEvents) {
+        super(container, events);
+        ...
+    }
+}
+```
+
    - Представление формы.
    - Свойства:
      - `submit`: Кнопка отправки.
@@ -150,6 +233,20 @@ yarn build
      - `errors()`: Обработка ошибок.
 
 8. **OrderForm**
+
+```typescript
+class OrderForm extends Form {
+    _paymentCard: HTMLButtonElement;
+    _paymentCash: HTMLButtonElement;
+    address: HTMLInputElement;
+
+    constructor(container: HTMLFormElement, events: IEvents) {
+        super(container, events);
+        ...
+    }
+}
+```
+
    - Форма заказа.
    - Свойства:
      - `_paymentCard`: Кнопка оплаты картой.
@@ -161,6 +258,17 @@ yarn build
      - `address()`: Установка адреса.
 
 9. **Success**
+```typescript
+class Success extends View<HTMLDivElement> {
+    close: HTMLButtonElement;
+    total: HTMLElement;
+
+    constructor(container: HTMLDivElement, events: IEvents) {
+        super(container, events);
+        ...
+    }
+}
+```
    - Представление успешного завершения операции.
    - Свойства:
      - `close`: Кнопка закрытия.
@@ -170,6 +278,17 @@ yarn build
      - `total()`: Расчет общей суммы.
 
 10. **Modal**
+```typescript
+class Modal extends View<HTMLDivElement> {
+    closeButton: HTMLButtonElement;
+    content: HTMLElement;
+
+    constructor(container: HTMLDivElement, events: IEvents) {
+        super(container, events);
+        ...
+    }
+}
+```
    - Модальное окно.
    - Свойства:
      - `closeButton`: Кнопка закрытия.
@@ -180,6 +299,16 @@ yarn build
      - `render()`: Отображение данных.
 
 11. **ContactsForm**
+```typescript
+class ContactsForm extends Form {
+    name: HTMLInputElement;
+
+    constructor(container: HTMLFormElement, events: IEvents) {
+        super(container, events);
+        ...
+    }
+}
+```
    - Форма контактов.
    - Свойства:
      - `submit`: Кнопка отправки.
