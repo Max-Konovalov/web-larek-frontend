@@ -318,6 +318,17 @@ class ContactsForm extends Form {
 
 ### Интерфейсы
 1. **Api**
+```typescript
+interface Api {
+    baseUrl: string;
+    options: RequestInit;
+
+    constructor(baseUrl: string, options: RequestInit = {}) {
+        this.baseUrl = baseUrl;
+        this.options = options;
+    }
+}
+```
    - Интерфейс для взаимодействия с API.
    - Методы:
      - `get()`: Выполнение GET-запроса.
