@@ -1,9 +1,9 @@
-import { ApiListResponse, IProduct, IOrder, IOrderResult } from '../types';
-import { Api } from './base/api';
-
-export interface IWebLarekApi {
-	getItemList: () => Promise<IProduct[]>;
-}
+import { ApiListResponse} from '../../types';
+import { Api } from '../base/api';
+import {IOrder} from "../base/interfaces/IOrder";
+import {IOrderResult} from "../base/interfaces/IOrderResult";
+import {IWebLarekApi} from "../base/interfaces/IWebLarekApi";
+import {IProduct} from "../base/interfaces/IProduct";
 
 export class WebLarekApi extends Api implements IWebLarekApi {
 	readonly cdn: string;

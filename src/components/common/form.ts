@@ -1,11 +1,8 @@
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/component';
 import { IEvents } from '../base/events';
+import { IFormValid } from './interfaces/IFormValid';
 
-interface IFormValid {
-	valid: boolean;
-	errors: string[];
-}
 
 export abstract class Form<T> extends Component<IFormValid> {
 	protected _submitButton: HTMLButtonElement;

@@ -45,59 +45,36 @@ yarn build
 ## Проектирование 
 Давайте рассмотрим основные компоненты и их взаимодействие.
 
-### Основные классы (Базовые классы)
-
-1. **Component<T>**
+### Основные классы (Базовый класс)
+**Component<T>**
 ```typescript
 class Component<T extends HTMLElement> {
-    container: T;
-
-    constructor(container: T) {
-        this.container = container;
-    }
+     protected constructor(protected readonly container: HTMLElement) {
+     }
 }
 ```
    - Представляет базовый компонент с различными элементами HTML и методами для управления ими.
    - Методы:
-     - `toggleClass()`: Переключение класса элемента.
-     - `setText()`: Установка текста элемента.
-     - `setDisable()`: Отключение элемента.
-     - `setHidden()`: Скрытие элемента.
-     - `setVisible()`: Отображение элемента.
-     - `setImage()`: Установка изображения элемента.
+     - `changeText()`: Установка текста элемента.
+     - `toggleElement()`: Отключение элемента.
      - `render()`: Отображение данных.
 
-2. **View<T>**
-```typescript
-class View<T extends HTMLElement> extends Component<T> {
-    events: IEvents;
 
-    constructor(container: T, events: IEvents) {
-        super(container);
-        this.events = events;
-    }
-}
-```
-   - Базовый класс для всех представлений, наследует Component.
-   - Содержит контейнер и события.
-    
 ### Классы
 
 1. **WebLarekAPI**
 
 ```typescript
 class WebLarekAPI implements IWebLarekAPI {
-    cdn: string;
-    baseUrl: string;
-
-    constructor(cdn: string, baseUrl: string, options?: RequestInit) {
-        this.cdn = cdn;
-        this.baseUrl = baseUrl;
-    }
+     readonly cdn: string;
+     constructor(cdn: string, baseUrl: string, options?: RequestInit) {
+          super(baseUrl, options);
+          this.cdn = cdn;
+     }
 }
 ```
 
-   - Класс для взаимодействия с WebLarek API, реализует интерфейс IWebLarekAPI.
+   - Класс для взаимодействия с WebLarek API, реализует интерфейс IWebLarekApi.
    - Свойства:
      - `cdn`: URL контентной сети доставки.
 
@@ -109,46 +86,56 @@ class WebLarekAPI implements IWebLarekAPI {
        
 3. **AppData**
 ```typescript
-class AppData {
-    items: IProduct[] = [];
-    preview: IProduct | null = null;
-    basket: IBasket = { items: [], total: 0 };
-    order: IOrder | null = null;
-    formErrors: Partial<Record<string, string>> = {};
-    events: IEvents;
+class AppState {
+     catalog: IProduct[] = [];
+     cart: IProduct[] = [];
+     order: IOrder = {
+          address: '',
+          payment: '',
+          email: '',
+          phone: '',
+          total: 0,
+          items: [],
+     };
+     orderFormErrors: OrderFormErrors = {};
+     contactsFormErrors: ContactsFormErrors = {};
 
-    constructor(events: IEvents) {
-        this.events = events;
-    }
+     constructor(data: Partial<IAppState>, protected events: IEvents) {
+          super(data, events);
+          this.catalog = [];
+          this.cart = [];
+          this.clearOrderForm();
+     }
 }
 ```
    - Класс для управления данными приложения.
    - Свойства:
-     - `items`: Список продуктов.
-     - `preview`: Предпросмотр продукта.
-     - `basket`: Корзина.
-     - `order`: Заказ.
-     - `formErrors`: Ошибки формы.
-     - `events`: События.
+     - `cart`: Корзина.
+     - `order`: Заказ. Включает в себя свойства:
+       - `address` : Адрес.
+       - `payment`: Способ оплаты.
+       - `email`: Электронная почта.
+       - `phone`: Телефон.
+       - `total`: Итоговая сумма заказа.
+       - `items`: Товары в корзине.
+     - `orderFormErrors`: Ошибки формы заказа.
+     - `contactsFormErrors`: Ошибки формы контактов.
    - Методы:
-     - `setItems()`: Установка списка продуктов.
-     - `setPreviewItem()`: Установка продукта для предпросмотра.
-     - `isInBasket()`: Проверка наличия продукта в корзине.
-     - `addToBasket()`: Добавление продукта в корзину.
-     - `removeFromBasket()`: Удаление продукта из корзины.
-     - `clearBasket()`: Очистка корзины.
-     - `setPaymentMethod()`: Установка метода оплаты.
-     - `setOrderField()`: Установка поля заказа.
-     - `validateOrder()`: Валидация заказа.
-     - `clearOrder()`: Очистка заказа.
+     - `addToCart()`: Добавление товара в корзину.
+     - `removeFromCart` : Удаление товара из корзины. 
+     - `isInCart` : Проверка на наличие товара в корзине.
+     - `getCartCount` : Кол-во товаров в корзине.
+     - `getTotalCartPrice` : Получение итоговой суммы заказа
+     - `clearOrderForm` : Очистка формы заказа
+     - `clearCartState` : Очистка корзины. 
 
 4. **Page**
 ```typescript
 class Page extends View<HTMLDivElement> {
-    counter: HTMLElement;
-    catalog: HTMLElement;
-    wrapper: HTMLElement;
-    basket: HTMLElement;
+     protected _counter: HTMLElement;
+     protected _catalog: HTMLElement;
+     protected _wrapper: HTMLElement;
+     protected _basket: HTMLButtonElement;
 }
 ```
    - Представление страницы.
@@ -165,116 +152,89 @@ class Page extends View<HTMLDivElement> {
 5. **Basket**
 ```typescript
 class Basket extends View<HTMLDivElement> {
-    items: string{};
-    list: string[];
-    total: number;
-    button: HTMLElement;
+     protected _list: HTMLElement;
+     protected _total: HTMLElement;
+     protected _button: HTMLElement;
 }
 ```
    - Представление корзины.
    - Свойства:
-     - `items`: Элементы корзины.
-     - `list`: Список элементов.
-     - `total`: Общая стоимость.
-     - `button`: Кнопка управления.
+     - `_list`: Список элементов.
+     - `_total`: Общая стоимость.
+     - `_button`: Кнопка управления.
    - Методы:
      - `toggleButton()`: Переключение состояния кнопки.
-     - `setItems()`: Установка элементов корзины.
+     - `items()`: Установка элементов корзины.
      - `total()`: Расчет общей стоимости.
 
 6. **Card**
 ```typescript
 class Card extends View<HTMLDivElement> {
-    title: string;
-    image: string;
-    price: number;
-    description: string;
-    category: string;
-    button: HTMLButtonElement;
+     protected _title: HTMLElement;
+     protected _price: HTMLElement;
+     protected _image?: HTMLImageElement;
+     protected _category?: HTMLElement;
+     protected _button?: HTMLButtonElement;
+     protected _description?: HTMLElement;
+     protected _index?: HTMLElement;
 }
 ```
    - Представление карточки продукта.
    - Свойства:
-     - `title`: Заголовок.
-     - `image`: Изображение.
-     - `price`: Цена.
-     - `description`: Описание.
-     - `category`: Категория.
-     - `button`: Кнопка.
+     - `_title`: Заголовок.
+     - `_image`: Изображение.
+     - `_price`: Цена.
+     - `_description`: Описание.
+     - `_category`: Категория.
+     - `_button`: Кнопка.
+     - `_index` : Номер карточки товара.
    - Методы:
-     - `toggle()`: Переключение состояния.
-     - `setTitle()`: Установка заголовка.
-     - `setPrice()`: Установка цены.
-     - `setDescription()`: Установка описания.
-     - `setImage()`: Установка изображения.
-     - `button()`: Управление кнопкой.
+     - `inCart` : Изменение статуса кнопки "В корзину"
 
 7. **Form**
 ```typescript
 class Form extends View<HTMLFormElement> {
-    submit: HTMLButtonElement;
-    errors: HTMLElement;
-
-    constructor(container: HTMLFormElement, events: IEvents) {
-        super(container, events);
-        ...
-    }
+    protected _submitButton: HTMLButtonElement;
+    protected _errorElement: HTMLElement;
 }
 ```
 
    - Представление формы.
    - Свойства:
-     - `submit`: Кнопка отправки.
-     - `errors`: Ошибки формы.
+     - `_submitButton`: Кнопка отправки.
+     - `_errorElement`: Ошибки формы.
    - Методы:
-     - `inputChange()`: Обработка изменения ввода.
-     - `submit()`: Отправка формы.
-     - `setVisible()`: Установка видимости.
+     - `onInputChangeValue()`: Обработка изменения ввода.
      - `errors()`: Обработка ошибок.
 
 8. **OrderForm**
 
 ```typescript
 class OrderForm extends Form {
-    _paymentCard: HTMLButtonElement;
-    _paymentCash: HTMLButtonElement;
-    address: HTMLInputElement;
-
-    constructor(container: HTMLFormElement, events: IEvents) {
-        super(container, events);
-        ...
-    }
+    protected _buttons: HTMLButtonElement[] = [];
 }
 ```
 
    - Форма заказа.
    - Свойства:
-     - `_paymentCard`: Кнопка оплаты картой.
-     - `_paymentCash`: Кнопка оплаты наличными.
-     - `address`: Адрес доставки.
+     - `buttons`: Список типов оплаты.
    - Методы:
-     - `OrderForm()`: Конструктор.
-     - `setPaymentValue()`: Установка значения оплаты.
+     - `cleanFieldValues()`: Очистка полей ввода.
+     - `payment()`: Выбор способа оплаты.
      - `address()`: Установка адреса.
 
 9. **Success**
 ```typescript
 class Success extends View<HTMLDivElement> {
-    close: HTMLButtonElement;
-    total: HTMLElement;
-
-    constructor(container: HTMLDivElement, events: IEvents) {
-        super(container, events);
-        ...
-    }
+    protected _button: HTMLButtonElement;
+    protected _description: HTMLElement;
 }
 ```
    - Представление успешного завершения операции.
    - Свойства:
-     - `close`: Кнопка закрытия.
-     - `total`: Общая сумма.
+     - `_button`: Кнопка закрытия.
+     - `_description`: Общая сумма.
    - Методы:
-     - `Success()`: Конструктор.
      - `total()`: Расчет общей суммы.
 
 10. **Modal**
@@ -345,32 +305,31 @@ interface Api {
 3. **IWebLarekAPI** (Интерфейс)
    - Интерфейс для взаимодействия с WebLarek API.
    - Методы:
-     - `getProductList()`: Получение списка продуктов.
-     - `getProduct()`: Получение продукта по ID.
-     - `createOrder()`: Создание заказа.
+     - `getItemList()`: Получение списка продуктов.
+     - `postOrder()`: Создание заказа.
     
 ### События приложения
 
 #### События изменения данных (генерируются из модели данных)
 
 - items:change - изменение массива продуктов
-- preview:change - изменение продукта, который открыт в модальном окне
-- basket:change - изменение изменение списка корзины
-- formErrors:change - изменение в списке ошибок валидации формы
+- cart:changed - изменение изменение списка корзины
+- orderFormErrors:change - изменение в списке ошибок валидации формы заказа
+- contactsFormErrors:change - изменение в списке ошибок валидации формы контактов
 
 #### События интерфейса (генерируются из классов представления)
 - modal:open - открытие модального окна
 - modal:close - закрытие модального окна
-- basket:open - открытие модального окна корзины
+- cart:open - открытие модального окна корзины
 - card:select - выбор карточки
 - order:open - открытие окна оформления заказа
-- форма:submit - отправка формы с кастомным названием
-- форма.поле:change - изменение поля с кастомным названием в форме с кастомным названием
+- order:submit - отправка формы заказа
+- contacts:submit - отправка формы контактов
 
 ### Взаимодействие классов
 
 - **EventEmitter** используется для управления событиями в различных компонентах.
-- **Api** взаимодействует с **WebLarekAPI** для выполнения запросов к серверу.
+- **Api** взаимодействует с **WebLarekApi** для выполнения запросов к серверу.
 - **AppData** управляет состоянием приложения и взаимодействует с различными представлениями, такими как **Page**, **Basket**, и **Card**.
 - **Forms** используются для обработки пользовательских данных и управления формами, такими как **OrderForm** и **ContactsForm**.
 

@@ -1,22 +1,22 @@
-import { IOrderForm } from '../types';
-import { ACTIVE_BUTTON_CLASS } from '../utils/constants';
-import { IEvents } from './base/events';
-import { Form } from './common/form';
+import { ACTIVE_BUTTON_CLASS } from '../../../utils/constants';
+import { IEvents } from '../../base/events';
+import { Form } from '../../common/form';
+import {IOrderForm} from "./IOrderForm";
 
 export class Order extends Form<IOrderForm> {
-	protected buttons: HTMLButtonElement[] = [];
+	protected _buttons: HTMLButtonElement[] = [];
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this.buttons = [
+		this._buttons = [
 			container.elements.namedItem('card') as HTMLButtonElement,
 			container.elements.namedItem('cash') as HTMLButtonElement,
 		];
 
-		this.buttons.forEach((button) => {
+		this._buttons.forEach((button) => {
 			button.addEventListener('click', () => {
-				this.buttons.forEach((item) =>
+				this._buttons.forEach((item) =>
 					item.classList.remove(ACTIVE_BUTTON_CLASS)
 				);
 				button.classList.add(ACTIVE_BUTTON_CLASS);
@@ -30,7 +30,7 @@ export class Order extends Form<IOrderForm> {
 	}
 
 	set payment(value: string) {
-		const currentButton = this.buttons.find((button, index, array) => {
+		const currentButton = this._buttons.find((button, index, array) => {
 			return button.name === value;
 		});
 		if (currentButton) {
@@ -42,7 +42,7 @@ export class Order extends Form<IOrderForm> {
 	cleanFieldValues() {
 		this.address = '';
 		this.payment = '';
-		this.buttons.forEach((button) =>
+		this._buttons.forEach((button) =>
 			button.classList.remove(ACTIVE_BUTTON_CLASS)
 		);
 	}

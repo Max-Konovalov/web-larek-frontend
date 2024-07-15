@@ -1,6 +1,11 @@
-import { ContactsFormErrors,FormName,IAnyForm,IAppState,IProduct,IOrder,OrderFormErrors} from '../types';
-import { Model } from './base/model';
-import { IEvents } from './base/events';
+import { ContactsFormErrors,FormName,OrderFormErrors} from '../../types';
+import { Model } from '../base/model';
+import { IEvents } from '../base/events';
+import {IAppState} from "./IAppState";
+import {IProduct} from "../base/interfaces/IProduct";
+import {IAnyForm} from "../forms/IAnyForm";
+import {IOrder} from "../base/interfaces/IOrder";
+
 
 export class AppState extends Model<IAppState> {
 	catalog: IProduct[] = [];
@@ -30,12 +35,12 @@ export class AppState extends Model<IAppState> {
 
 	addToCart(item: IProduct) {
 		this.cart.push(item);
-		this.emitChanges('basket:changed');
+		this.emitChanges('cart:changed');
 	}
 
 	removeFromCart(item: IProduct) {
 		this.cart = this.cart.filter((basketItem) => basketItem.id !== item.id);
-		this.emitChanges('basket:changed');
+		this.emitChanges('cart:changed');
 	}
 
 	isInCart(item: IProduct) {
@@ -98,7 +103,7 @@ export class AppState extends Model<IAppState> {
 
 	clearCartState() {
 		this.cart = [];
-		this.emitChanges('basket:changed');
+		this.emitChanges('cart:changed');
 	}
 
 	prepareOrder() {

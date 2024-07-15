@@ -1,11 +1,7 @@
-import { createElement, priceString } from '../utils/utils';
-import { Component } from './base/component';
-import { EventEmitter } from './base/events';
-
-interface ICart {
-	items: HTMLElement[];
-	total: string;
-}
+import { createElement, priceString } from '../../utils/utils';
+import { Component } from '../base/component';
+import { EventEmitter } from '../base/events';
+import {ICart} from "./ICart";
 
 export class Cart extends Component<ICart> {
 	protected _list: HTMLElement;

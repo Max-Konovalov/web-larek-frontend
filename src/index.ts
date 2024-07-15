@@ -1,36 +1,27 @@
 import './scss/styles.scss';
 
-import { AppState } from './components/appData';
-import { Cart } from './components/cart';
-import { Card } from './components/card';
-import { Contacts } from './components/contactForm';
-import { WebLarekApi } from './components/cardsApi';
-import { Order } from './components/orderForm';
-import { Page } from './components/pageView';
-import { Success } from './components/succesView';
-import { EventEmitter } from './components/base/events';
+import { Card } from './components/card/card';
 import { Form } from './components/common/form';
-import { Modal } from './components/common/modal';
-import { FormName, IAnyForm, IContactsForm, IProduct, IOrderForm } from './types';
-import { API_URL, CDN_URL } from './utils/constants';
-import { cloneTemplate, ensureElement } from './utils/utils';
-
-const api = new WebLarekApi(CDN_URL, API_URL);
-const events = new EventEmitter();
-const appData = new AppState({}, events);
-const page = new Page(document.body, events);
-const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
-const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
-const cartTemplate = ensureElement<HTMLTemplateElement>('#basket');
-const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
-const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
-const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
-const successTemplate = ensureElement<HTMLTemplateElement>('#success');
-const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
-const cart = new Cart(cloneTemplate(cartTemplate), events);
-const order = new Order(cloneTemplate(orderTemplate), events);
-const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
-const success = new Success(cloneTemplate(successTemplate), events);
+import { FormName } from './types';
+import {
+	api,
+	appData,
+	cardBasketTemplate,
+	cardCatalogTemplate,
+	cardPreviewTemplate,
+	cart,
+	contacts,
+	modal,
+	order,
+	page,
+	success,
+	events
+} from './utils/constants';
+import { cloneTemplate } from './utils/utils';
+import {IAnyForm} from "./components/forms/IAnyForm";
+import {IOrderForm} from "./components/forms/order/IOrderForm";
+import {IContactsForm} from "./components/forms/contacts/IContactsForm";
+import {IProduct} from "./components/base/interfaces/IProduct";
 
 const onFormErrorsChange = (input: {
 	errors: Partial<IAnyForm>;
@@ -91,7 +82,7 @@ events.on('card:select', (item: IProduct) => {
 	});
 });
 
-events.on('basket:changed', () => {
+events.on('cart:changed', () => {
 	page.counter = appData.getCartCount();
 	cart.items = appData.cart.map((item, index) => {
 		const card: Card = new Card(cloneTemplate(cardBasketTemplate), {
@@ -116,7 +107,7 @@ events.on('modal:close', () => {
 	page.locked = false;
 });
 
-events.on('basket:open', () => {
+events.on('cart:open', () => {
 	modal.render({ content: cart.render() });
 });
 
