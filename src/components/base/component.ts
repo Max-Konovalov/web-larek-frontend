@@ -42,6 +42,7 @@ export abstract class Component<T> {
 
 	render(data?: Partial<T>): HTMLElement {
 		Object.assign(this as object, data ?? {});
+
 		return this.container;
 	}
 }

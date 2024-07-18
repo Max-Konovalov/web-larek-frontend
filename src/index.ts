@@ -39,6 +39,10 @@ export const order = new Order(cloneTemplate(orderTemplate), events);
 export const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
 export const success = new Success(cloneTemplate(successTemplate), events);
 
+api.getItemList()
+	.then((result) => appData.setCatalog(result))
+	.catch((err) => console.error(err));
+
 const onFormErrorsChange = (input: {
 	errors: Partial<IAnyForm>;
 	form: Form<IAnyForm>;
@@ -67,13 +71,9 @@ events.on('items:changed', () => {
 		const card = new Card(cloneTemplate(cardCatalogTemplate), {
 			onClick: () => events.emit('card:select', item),
 		});
-		console.log(card)
-		return card.render({
-			title: item.title,
-			price: item.price,
-			image: item.image,
-			category: item.category
-		});
+		console.log(card.render());
+		console.log(item);
+		return card.render(item);
 	});
 });
 
@@ -171,9 +171,3 @@ events.on('contacts:submit', () => {
 
 events.on('success:submit', () => modal.close());
 
-api.getItemList().then((result) => {
-		appData.setCatalog(result);
-	})
-	.catch((err) => {
-		console.error(err);
-	});
