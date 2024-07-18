@@ -1,7 +1,7 @@
 import { ensureElement } from '../../../utils/utils';
 import { Component } from '../../base/component';
 import { IEvents } from '../../base/events';
-import {IPage} from "./IPage";
+import {IPage} from "../../interfaces/IPage";
 export class Page extends Component<IPage> {
 	protected _counter: HTMLElement;
 	protected _catalog: HTMLElement;
@@ -26,13 +26,10 @@ export class Page extends Component<IPage> {
 	}
 
 	set counter(value: number) {
-		this.changeText(this._counter, String(value));
+		this.setText(this._counter, String(value));
 	}
 
 	set locked(value: boolean) {
-		this._wrapper.classList.add('page__wrapper_locked');
-		if (!value) {
-			this._wrapper.classList.remove('page__wrapper_locked');
-		}
+		this.toggleClass(this._wrapper, 'page__wrapper_locked', value);
 	}
 }

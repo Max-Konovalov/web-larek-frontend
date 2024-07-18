@@ -1,11 +1,10 @@
 import { ContactsFormErrors,FormName,OrderFormErrors} from '../../types';
 import { Model } from '../base/model';
 import { IEvents } from '../base/events';
-import {IAppState} from "./IAppState";
+import {IAppState} from "../interfaces/IAppState";
 import {IProduct} from "../base/interfaces/IProduct";
 import {IAnyForm} from "../forms/IAnyForm";
 import {IOrder} from "../base/interfaces/IOrder";
-
 
 export class AppState extends Model<IAppState> {
 	catalog: IProduct[] = [];
@@ -39,7 +38,7 @@ export class AppState extends Model<IAppState> {
 	}
 
 	removeFromCart(item: IProduct) {
-		this.cart = this.cart.filter((basketItem) => basketItem.id !== item.id);
+		this.cart = this.cart.filter((cartItem) => cartItem.id !== item.id);
 		this.emitChanges('cart:changed');
 	}
 

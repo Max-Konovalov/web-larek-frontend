@@ -17,9 +17,9 @@ export class Order extends Form<IOrderForm> {
 		this._buttons.forEach((button) => {
 			button.addEventListener('click', () => {
 				this._buttons.forEach((item) =>
-					item.classList.remove(ACTIVE_BUTTON_CLASS)
+					this.toggleClass(item, ACTIVE_BUTTON_CLASS, false)
 				);
-				button.classList.add(ACTIVE_BUTTON_CLASS);
+				this.toggleClass(button, ACTIVE_BUTTON_CLASS, true);
 				this.onInputChangeValue('payment', button.name);
 			});
 		});
@@ -34,7 +34,7 @@ export class Order extends Form<IOrderForm> {
 			return button.name === value;
 		});
 		if (currentButton) {
-			currentButton.classList.add(ACTIVE_BUTTON_CLASS);
+			this.toggleClass(currentButton, ACTIVE_BUTTON_CLASS, true);
 			this.onInputChangeValue('payment', currentButton.name);
 		}
 	}
@@ -43,7 +43,7 @@ export class Order extends Form<IOrderForm> {
 		this.address = '';
 		this.payment = '';
 		this._buttons.forEach((button) =>
-			button.classList.remove(ACTIVE_BUTTON_CLASS)
+			this.toggleClass(button, ACTIVE_BUTTON_CLASS, false)
 		);
 	}
 }

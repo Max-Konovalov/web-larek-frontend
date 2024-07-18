@@ -1,7 +1,7 @@
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/component';
-import {ICard} from "./ICard";
-import {ICardActions} from "./ICardActions";
+import {ICard} from "../interfaces/ICard";
+import {ICardActions} from "../interfaces/ICardActions";
 
 export class Card extends Component<ICard> {
 	protected _title: HTMLElement;

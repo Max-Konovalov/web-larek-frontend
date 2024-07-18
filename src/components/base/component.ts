@@ -2,16 +2,41 @@ export abstract class Component<T> {
 	protected constructor(protected readonly container: HTMLElement) {
 	}
 
-	protected changeText(element: HTMLElement, value: unknown) {
+	// Переключить класс
+	toggleClass(element: HTMLElement, className: string, force?: boolean) {
+		element.classList.toggle(className, force);
+	}
+
+	protected setText(element: HTMLElement, value: unknown) {
 		if (element) {
 			element.textContent = String(value);
 		}
 	}
 
-	toggleElement(element: HTMLElement, state: boolean) {
+	setDisabled(element: HTMLElement, state: boolean) {
 		if (element) {
 			if (state) element.setAttribute('disabled', 'disabled');
 			else element.removeAttribute('disabled');
+		}
+	}
+
+	// Скрыть
+	protected setHidden(element: HTMLElement) {
+		element.style.display = 'none';
+	}
+
+	// Показать
+	protected setVisible(element: HTMLElement) {
+		element.style.removeProperty('display');
+	}
+
+	// Установить изображение с алтернативным текстом
+	protected setImage(element: HTMLImageElement, src: string, alt?: string) {
+		if (element) {
+			element.src = src;
+			if (alt) {
+				element.alt = alt;
+			}
 		}
 	}
 

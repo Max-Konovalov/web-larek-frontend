@@ -1,7 +1,7 @@
 import { priceString } from '../../../utils/utils';
 import { Component } from '../../base/component';
 import { EventEmitter } from '../../base/events';
-import {ISuccess} from "./ISuccess";
+import {ISuccess} from "../../interfaces/ISuccess";
 
 export class Success extends Component<ISuccess> {
 	protected _button: HTMLButtonElement;

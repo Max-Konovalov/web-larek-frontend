@@ -1,7 +1,7 @@
 import { createElement, priceString } from '../../utils/utils';
 import { Component } from '../base/component';
 import { EventEmitter } from '../base/events';
-import {ICart} from "./ICart";
+import {ICart} from "../interfaces/ICart";
 
 export class Cart extends Component<ICart> {
 	protected _list: HTMLElement;
@@ -42,6 +42,6 @@ export class Cart extends Component<ICart> {
 	}
 
 	toggleButton(disabled: boolean) {
-		this.toggleElement(this._button, disabled);
+		this.setDisabled(this._button, disabled);
 	}
 }

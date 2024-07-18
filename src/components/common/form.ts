@@ -38,11 +38,11 @@ export abstract class Form<T> extends Component<IFormValid> {
 	}
 
 	set valid(value: boolean) {
-		this._submitButton.disabled = !value;
+		this.setDisabled(this._submitButton, !value);
 	}
 
 	set errors(value: string) {
-		this.changeText(this._errorElement, value);
+		this.setText(this._errorElement, value);
 	}
 
 	render(state: Partial<T> & IFormValid) {
