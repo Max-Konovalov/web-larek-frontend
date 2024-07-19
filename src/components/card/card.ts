@@ -92,6 +92,6 @@ export class Card extends Component<ICard> {
 	}
 
 	set inCart(isInBasket: boolean) {
-		this._button.textContent = isInBasket ? 'Убрать' : 'В корзину';
+		this.setText(this._button, isInBasket ? 'Убрать' : 'В корзину');
 	}
 }

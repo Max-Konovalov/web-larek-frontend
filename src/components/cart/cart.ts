@@ -38,7 +38,7 @@ export class Cart extends Component<ICart> {
 	}
 
 	set total(total: number) {
-		this._total.textContent = priceString(total);
+		this.setText(this._total, priceString(total));
 	}
 
 	toggleButton(disabled: boolean) {
